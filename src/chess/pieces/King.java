@@ -8,7 +8,7 @@ import chess.Color;
 
 public class King extends ChessPiece {
 
-    private ChessMatch chessMatch;
+    private final ChessMatch chessMatch;
 
     public King(Board board, Color color, ChessMatch chessMatch) {
         super(board, color);
@@ -28,62 +28,62 @@ public class King extends ChessPiece {
     }
 
     private boolean canMove(Position position) {
-        ChessPiece p = (ChessPiece) getBoard().piece(position);
-        return p == null || p.getColor() != getColor();
+        ChessPiece piece = (ChessPiece) getBoard().piece(position);
+        return piece == null || piece.getColor() != getColor();
     }
 
     @Override
     public boolean[][] possibleMoves() {
-        boolean[][] mat = new boolean[getBoard().getRows()][getBoard().getColumns()];
+        boolean[][] possibleBoardSquares = new boolean[getBoard().getRows()][getBoard().getColumns()];
 
-        Position p = new Position(0, 0);
+        Position auxPosition = new Position(0, 0);
 
         // above
-        p.setValues(position.getRow() - 1, position.getColumn());
-        if (getBoard().positionExists(p) && canMove(p)) {
-            mat[p.getRow()][p.getColumn()] = true;
+        auxPosition.setValues(position.getRow() - 1, position.getColumn());
+        if (getBoard().positionExists(auxPosition) && canMove(auxPosition)) {
+            possibleBoardSquares[auxPosition.getRow()][auxPosition.getColumn()] = true;
         }
 
         // below
-        p.setValues(position.getRow() + 1, position.getColumn());
-        if (getBoard().positionExists(p) && canMove(p)) {
-            mat[p.getRow()][p.getColumn()] = true;
+        auxPosition.setValues(position.getRow() + 1, position.getColumn());
+        if (getBoard().positionExists(auxPosition) && canMove(auxPosition)) {
+            possibleBoardSquares[auxPosition.getRow()][auxPosition.getColumn()] = true;
         }
 
         // left
-        p.setValues(position.getRow(), position.getColumn() - 1);
-        if (getBoard().positionExists(p) && canMove(p)) {
-            mat[p.getRow()][p.getColumn()] = true;
+        auxPosition.setValues(position.getRow(), position.getColumn() - 1);
+        if (getBoard().positionExists(auxPosition) && canMove(auxPosition)) {
+            possibleBoardSquares[auxPosition.getRow()][auxPosition.getColumn()] = true;
         }
 
         // right
-        p.setValues(position.getRow(), position.getColumn() + 1);
-        if (getBoard().positionExists(p) && canMove(p)) {
-            mat[p.getRow()][p.getColumn()] = true;
+        auxPosition.setValues(position.getRow(), position.getColumn() + 1);
+        if (getBoard().positionExists(auxPosition) && canMove(auxPosition)) {
+            possibleBoardSquares[auxPosition.getRow()][auxPosition.getColumn()] = true;
         }
 
         // NW
-        p.setValues(position.getRow() - 1, position.getColumn() - 1);
-        if (getBoard().positionExists(p) && canMove(p)) {
-            mat[p.getRow()][p.getColumn()] = true;
+        auxPosition.setValues(position.getRow() - 1, position.getColumn() - 1);
+        if (getBoard().positionExists(auxPosition) && canMove(auxPosition)) {
+            possibleBoardSquares[auxPosition.getRow()][auxPosition.getColumn()] = true;
         }
 
         // NE
-        p.setValues(position.getRow() - 1, position.getColumn() + 1);
-        if (getBoard().positionExists(p) && canMove(p)) {
-            mat[p.getRow()][p.getColumn()] = true;
+        auxPosition.setValues(position.getRow() - 1, position.getColumn() + 1);
+        if (getBoard().positionExists(auxPosition) && canMove(auxPosition)) {
+            possibleBoardSquares[auxPosition.getRow()][auxPosition.getColumn()] = true;
         }
 
         // SW
-        p.setValues(position.getRow() + 1, position.getColumn() - 1);
-        if (getBoard().positionExists(p) && canMove(p)) {
-            mat[p.getRow()][p.getColumn()] = true;
+        auxPosition.setValues(position.getRow() + 1, position.getColumn() - 1);
+        if (getBoard().positionExists(auxPosition) && canMove(auxPosition)) {
+            possibleBoardSquares[auxPosition.getRow()][auxPosition.getColumn()] = true;
         }
 
         // SE
-        p.setValues(position.getRow() + 1, position.getColumn() + 1);
-        if (getBoard().positionExists(p) && canMove(p)) {
-            mat[p.getRow()][p.getColumn()] = true;
+        auxPosition.setValues(position.getRow() + 1, position.getColumn() + 1);
+        if (getBoard().positionExists(auxPosition) && canMove(auxPosition)) {
+            possibleBoardSquares[auxPosition.getRow()][auxPosition.getColumn()] = true;
         }
 
         // #special move castling
@@ -94,7 +94,7 @@ public class King extends ChessPiece {
                 Position oneSquareToTheRight = new Position(position.getRow(), position.getColumn() + 1);
                 Position twoSquaresToTheRight = new Position(position.getRow(), position.getColumn() + 2);
                 if (getBoard().piece(oneSquareToTheRight) == null && getBoard().piece(twoSquaresToTheRight) == null) {
-                    mat[position.getRow()][position.getColumn() + 2] = true;
+                    possibleBoardSquares[position.getRow()][position.getColumn() + 2] = true;
                 }
             }
             // special move castling queen side rook
@@ -107,11 +107,11 @@ public class King extends ChessPiece {
                                 && getBoard().piece(twoSquaresToTheLeft) == null
                                 && getBoard().piece(threeSquaresToTheLeft) == null
                 ) {
-                    mat[position.getRow()][position.getColumn() - 2] = true;
+                    possibleBoardSquares[position.getRow()][position.getColumn() - 2] = true;
                 }
             }
         }
 
-        return mat;
+        return possibleBoardSquares;
     }
 }
