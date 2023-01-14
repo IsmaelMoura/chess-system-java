@@ -2,13 +2,24 @@ package chess.pieces;
 
 import boardgame.Board;
 import boardgame.Position;
+import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.Color;
 
 public class King extends ChessPiece {
 
-    public King(Board board, Color color) {
+    private ChessMatch chessMatch;
+
+    public King(Board board, Color color, ChessMatch chessMatch) {
         super(board, color);
+        this.chessMatch = chessMatch;
+    }
+
+    private boolean testRookCastling(Position position) {
+        ChessPiece chessPiece = (ChessPiece) getBoard().piece(position);
+        return chessPiece instanceof Rook
+                && chessPiece.getColor() == getColor()
+                && chessPiece.getMoveCount() == 0;
     }
 
     @Override
@@ -73,6 +84,32 @@ public class King extends ChessPiece {
         p.setValues(position.getRow() + 1, position.getColumn() + 1);
         if (getBoard().positionExists(p) && canMove(p)) {
             mat[p.getRow()][p.getColumn()] = true;
+        }
+
+        // #special move castling
+        if (getMoveCount() == 0 && !chessMatch.getCheck()) {
+            // special move castling kingside rook
+            Position rightRook = new Position(position.getRow(), position.getColumn() + 3);
+            if (testRookCastling(rightRook)) {
+                Position oneSquareToTheRight = new Position(position.getRow(), position.getColumn() + 1);
+                Position twoSquaresToTheRight = new Position(position.getRow(), position.getColumn() + 2);
+                if (getBoard().piece(oneSquareToTheRight) == null && getBoard().piece(twoSquaresToTheRight) == null) {
+                    mat[position.getRow()][position.getColumn() + 2] = true;
+                }
+            }
+            // special move castling queen side rook
+            Position leftRook = new Position(position.getRow(), position.getColumn() - 4);
+            if (testRookCastling(leftRook)) {
+                Position oneSquareToTheLeft = new Position(position.getRow(), position.getColumn() - 1);
+                Position twoSquaresToTheLeft = new Position(position.getRow(), position.getColumn() - 2);
+                Position threeSquaresToTheLeft = new Position(position.getRow(), position.getColumn() - 3);
+                if (getBoard().piece(oneSquareToTheLeft) == null
+                                && getBoard().piece(twoSquaresToTheLeft) == null
+                                && getBoard().piece(threeSquaresToTheLeft) == null
+                ) {
+                    mat[position.getRow()][position.getColumn() - 2] = true;
+                }
+            }
         }
 
         return mat;
